@@ -581,19 +581,22 @@
       display: none;
       position: fixed;
       top: 0;
-      right: -100%;
+      right: 0;
       width: 320px;
       height: 100vh;
       background: var(--bg);
       border-left: 1px solid var(--border);
       padding: 6rem 2rem 2rem;
-      transition: right 0.3s ease;
+      transition: transform 0.3s ease;
+      transform: translateX(100%);
       z-index: 999;
       overflow-y: auto;
+      pointer-events: none;
     }
 
     .mobile-menu.active {
-      right: 0;
+      transform: translateX(0);
+      pointer-events: auto;
     }
 
     .mobile-menu ul {
@@ -880,6 +883,26 @@
       }
     }
   </style>
+  <script>
+    // Mobile menu toggle - must be in head to be available for onclick
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-overlay');
+      const hamburger = document.getElementById('hamburger');
+      
+      if (menu && overlay && hamburger) {
+        menu.classList.toggle('active');
+        overlay.classList.toggle('active');
+        hamburger.classList.toggle('active');
+        
+        if (menu.classList.contains('active')) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -1308,24 +1331,6 @@
 
     // Current language
     let currentLang = 'no';
-
-    // Toggle mobile menu
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobile-menu');
-      const overlay = document.getElementById('mobile-overlay');
-      const hamburger = document.getElementById('hamburger');
-      
-      menu.classList.toggle('active');
-      overlay.classList.toggle('active');
-      hamburger.classList.toggle('active');
-      
-      // Prevent body scroll when menu is open
-      if (menu.classList.contains('active')) {
-        document.body.style.overflow = 'hidden';
-      } else {
-        document.body.style.overflow = '';
-      }
-    }
 
     // Detect user's language based on browser settings
     function detectLanguage() {
