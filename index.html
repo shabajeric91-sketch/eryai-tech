@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ery AI – AI-drevet kundeservice som faktisk fungerer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0a0f1a;
+      --surface: #111827;
+      --surface-elevated: #1a2332;
+      --border: #2d3748;
+      --text-primary: #f7fafc;
+      --text-secondary: #a0aec0;
+      --text-muted: #718096;
+      --accent: #7c3aed;
+      --accent-hover: #8b5cf6;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --grid: #1a2332;
+    }
+
+    body {
+      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Background grid pattern */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.3;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(10, 15, 26, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+    }
+
+    .logo {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    nav a:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-cta {
+      background: var(--accent);
+      color: white !important;
+      padding: 0.6rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .lang-switcher select {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .lang-switcher select:hover {
+      border-color: var(--accent);
+    }
+
+    .lang-switcher select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 12rem 0 8rem;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .hero-badge .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.03em;
+      max-width: 900px;
+    }
+
+    .hero h1 .highlight {
+      color: var(--accent);
+      position: relative;
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 1.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(124, 58, 237, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--surface);
+      border-color: var(--accent);
+    }
+
+    /* Problem Section */
+    .problem {
+      padding: 6rem 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin-bottom: 4rem;
+      line-height: 1.7;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+
+    .stat-card {
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-4px);
+    }
+
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--warning);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    /* Solution Section */
+    .solution {
+      padding: 8rem 0;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      margin-top: 4rem;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      border-color: var(--accent);
+      background: var(--surface-elevated);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .feature-card p {
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* Story Section */
+    .story {
+      padding: 8rem 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .story-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .story-quote {
+      font-size: 1.5rem;
+      font-weight: 500;
+      line-height: 1.6;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+      font-style: italic;
+    }
+
+    .story-author {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    .story-author strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 8rem 0;
+    }
+
+    .cta-box {
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      border-radius: 16px;
+      padding: 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 50px,
+          rgba(255, 255, 255, 0.03) 50px,
+          rgba(255, 255, 255, 0.03) 51px
+        ),
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 50px,
+          rgba(255, 255, 255, 0.03) 50px,
+          rgba(255, 255, 255, 0.03) 51px
+        );
+      pointer-events: none;
+    }
+
+    .cta-box h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .cta-box p {
+      font-size: 1.25rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .cta-form {
+      display: flex;
+      gap: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .cta-form input {
+      flex: 1;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      background: white;
+      color: var(--bg);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .cta-form input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .cta-form button {
+      background: var(--bg);
+      color: white;
+      padding: 1rem 2rem;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .cta-form button:hover {
+      background: var(--surface);
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 4rem 0 2rem;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--text-primary);
+    }
+
+    .footer-copy {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav ul {
+        gap: 1rem;
+      }
+
+      nav a {
+        font-size: 0.8rem;
+      }
+
+      .hero {
+        padding: 8rem 0 4rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1rem;
+      }
+
+      .hero-ctas {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stats-grid,
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-form {
+        flex-direction: column;
+      }
+
+      .cta-box {
+        padding: 3rem 2rem;
+      }
+
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="container">
+      <div class="logo">ery<span>.ai</span></div>
+      <ul>
+        <li><a href="#problem" data-i18n="nav.problem">Problem</a></li>
+        <li><a href="#solution" data-i18n="nav.solution">Løsning</a></li>
+        <li><a href="#story" data-i18n="nav.story">Hvorfor vi</a></li>
+        <li><a href="https://ery-kqapuyn42-eryais-projects.vercel.app/restaurant-demo.html" target="_blank">Demo</a></li>
+        <li><a href="#waitlist" class="nav-cta" data-i18n="nav.cta">Kom i gang</a></li>
+        <li class="lang-switcher">
+          <select id="lang-select" onchange="changeLanguage(this.value)">
+            <option value="no">🇳🇴 NO</option>
+            <option value="sv">🇸🇪 SV</option>
+            <option value="da">🇩🇰 DA</option>
+            <option value="en">🇬🇧 EN</option>
+          </select>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        <span data-i18n="hero.badge">Bygget av kundeservice-folk, for kundeservice-folk</span>
+      </div>
+      <h1>
+        <span data-i18n="hero.title1">Kundeservice som</span> <span class="highlight" data-i18n="hero.titleHighlight">faktisk løser</span> <span data-i18n="hero.title2">problemet</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="hero.subtitle">
+        90% av supporthenvendelser er repeterende støy. Vi automatiserer dem – på svensk, norsk, dansk – så teamet ditt kan fokusere på det som faktisk krever mennesker.
+      </p>
+      <div class="hero-ctas">
+        <a href="https://ery-kqapuyn42-eryais-projects.vercel.app/restaurant-demo.html" target="_blank" class="btn btn-primary">
+          <span data-i18n="hero.cta1">Se live demo</span> →
+        </a>
+        <a href="#waitlist" class="btn btn-secondary" data-i18n="hero.cta2">
+          Book discovery call
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="problem" id="problem">
+    <div class="container">
+      <div class="section-label" data-i18n="problem.label">Problemet</div>
+      <h2 class="section-title" data-i18n="problem.title">Ditt supportteam drukner i støy</h2>
+      <p class="section-subtitle" data-i18n="problem.subtitle">
+        Jeg har jobbet i kundeservice. Jeg vet hvordan det føles: 8 timer med "Hva er åpningstidene?", "Glemt passord", "Hvor er min ordre?" – mens de viktige sakene ligger og venter.
+      </p>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-number">73%</div>
+          <div class="stat-label" data-i18n="problem.stat1">av henvendelser er repeterende spørsmål</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">4.2t</div>
+          <div class="stat-label" data-i18n="problem.stat2">spilder agenter daglig på "copy-paste" svar</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number">€180k</div>
+          <div class="stat-label" data-i18n="problem.stat3">årlig kostnad per agent (nordisk lønn)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solution Section -->
+  <section class="solution" id="solution">
+    <div class="container">
+      <div class="section-label" data-i18n="solution.label">Løsningen</div>
+      <h2 class="section-title" data-i18n="solution.title">AI som forstår nordiske kunder</h2>
+      <p class="section-subtitle" data-i18n="solution.subtitle">
+        Ikke enda en generisk chatbot. Ery AI er bygget for nordiske SMB – trent på hvordan skandinaver faktisk kommuniserer, med støtte for svensk, norsk og dansk.
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3 data-i18n="solution.chat.title">Chat</h3>
+          <p data-i18n="solution.chat.desc">Instant svar på nettsiden din. Lærer fra hver samtale. Eskalerer til menneske når det trengs.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📧</div>
+          <h3 data-i18n="solution.email.title">E-post</h3>
+          <p data-i18n="solution.email.desc">Automatisk håndtering av support-e-post. Svarer på vanlige spørsmål, ruter viktige saker videre.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📞</div>
+          <h3 data-i18n="solution.phone.title">Telefon</h3>
+          <p data-i18n="solution.phone.desc">AI-drevet telefonsvarer som forstår norsk. Tar imot bestillinger, booker møter, svarer på FAQ.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story Section -->
+  <section class="story" id="story">
+    <div class="container">
+      <div class="section-label" data-i18n="story.label">Hvorfor vi</div>
+      <div class="story-content">
+        <p class="story-quote" data-i18n="story.quote">
+          "Jeg har jobbet i kundeservice og tech-selskaper (startups og enterprise). Jeg har sett begge sider: frustrasjonen av repeterende arbeid OG hvilken effekt riktig automatisering kan ha. Ery AI er ikke bygget av AI-bros som aldri har jobbet support – det er bygget av noen som faktisk forstår smerten."
+        </p>
+        <p class="story-author">
+          <strong>Eric Shabaj</strong> · Founder, Ery AI · <span data-i18n="story.author">Ex-kundeservice, startup-veteran</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section" id="waitlist">
+    <div class="container">
+      <div class="cta-box">
+        <h2 data-i18n="cta.title">Klar til å kutte støyen?</h2>
+        <p data-i18n="cta.subtitle">Book en 20 min discovery call – vi viser deg hvordan Ery AI passer ditt team.</p>
+        <div class="cta-form">
+          <input type="email" placeholder="din@bedrift.no" id="email-input" data-i18n-placeholder="cta.placeholder">
+          <button onclick="submitWaitlist()" data-i18n="cta.button">Book discovery call</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="logo">ery<span>.ai</span></div>
+        <ul class="footer-links">
+          <li><a href="https://ery-kqapuyn42-eryais-projects.vercel.app/restaurant-demo.html" target="_blank">Demo</a></li>
+          <li><a href="mailto:info@eryai.tech" data-i18n="footer.contact">Kontakt</a></li>
+          <li><a href="#waitlist">Waitlist</a></li>
+        </ul>
+      </div>
+      <div class="footer-copy" data-i18n="footer.copy">
+        © 2026 Ery AI · Bygget for nordiske SMB
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Translation dictionary
+    const translations = {
+      no: {
+        nav: {
+          problem: "Problem",
+          solution: "Løsning",
+          story: "Hvorfor vi",
+          cta: "Kom i gang"
+        },
+        hero: {
+          badge: "Bygget av kundeservice-folk, for kundeservice-folk",
+          title1: "Kundeservice som",
+          titleHighlight: "faktisk løser",
+          title2: "problemet",
+          subtitle: "90% av supporthenvendelser er repeterende støy. Vi automatiserer dem – på svensk, norsk, dansk – så teamet ditt kan fokusere på det som faktisk krever mennesker.",
+          cta1: "Se live demo",
+          cta2: "Book discovery call"
+        },
+        problem: {
+          label: "Problemet",
+          title: "Ditt supportteam drukner i støy",
+          subtitle: "Jeg har jobbet i kundeservice. Jeg vet hvordan det føles: 8 timer med \"Hva er åpningstidene?\", \"Glemt passord\", \"Hvor er min ordre?\" – mens de viktige sakene ligger og venter.",
+          stat1: "av henvendelser er repeterende spørsmål",
+          stat2: "spilder agenter daglig på \"copy-paste\" svar",
+          stat3: "årlig kostnad per agent (nordisk lønn)"
+        },
+        solution: {
+          label: "Løsningen",
+          title: "AI som forstår nordiske kunder",
+          subtitle: "Ikke enda en generisk chatbot. Ery AI er bygget for nordiske SMB – trent på hvordan skandinaver faktisk kommuniserer, med støtte for svensk, norsk og dansk.",
+          chat: {
+            title: "Chat",
+            desc: "Instant svar på nettsiden din. Lærer fra hver samtale. Eskalerer til menneske når det trengs."
+          },
+          email: {
+            title: "E-post",
+            desc: "Automatisk håndtering av support-e-post. Svarer på vanlige spørsmål, ruter viktige saker videre."
+          },
+          phone: {
+            title: "Telefon",
+            desc: "AI-drevet telefonsvarer som forstår norsk. Tar imot bestillinger, booker møter, svarer på FAQ."
+          }
+        },
+        story: {
+          label: "Hvorfor vi",
+          quote: "\"Jeg har jobbet i kundeservice og tech-selskaper (startups og enterprise). Jeg har sett begge sider: frustrasjonen av repeterende arbeid OG hvilken effekt riktig automatisering kan ha. Ery AI er ikke bygget av AI-bros som aldri har jobbet support – det er bygget av noen som faktisk forstår smerten.\"",
+          author: "Ex-kundeservice, startup-veteran"
+        },
+        cta: {
+          title: "Klar til å kutte støyen?",
+          subtitle: "Book en 20 min discovery call – vi viser deg hvordan Ery AI passer ditt team.",
+          placeholder: "din@bedrift.no",
+          button: "Book discovery call"
+        },
+        footer: {
+          contact: "Kontakt",
+          copy: "© 2026 Ery AI · Bygget for nordiske SMB"
+        },
+        alerts: {
+          success: "Takk! Vi kontakter deg på {email} innen 24 timer for å avtale discovery call.",
+          error: "Vennligst skriv inn en gyldig e-postadresse"
+        }
+      },
+      sv: {
+        nav: {
+          problem: "Problem",
+          solution: "Lösning",
+          story: "Varför vi",
+          cta: "Kom igång"
+        },
+        hero: {
+          badge: "Byggd av kundservice-folk, för kundservice-folk",
+          title1: "Kundservice som",
+          titleHighlight: "faktiskt löser",
+          title2: "problemet",
+          subtitle: "90% av supportärenden är repetitiva störningar. Vi automatiserar dem – på svenska, norska, danska – så ditt team kan fokusera på det som faktiskt kräver människor.",
+          cta1: "Se live demo",
+          cta2: "Boka discovery call"
+        },
+        problem: {
+          label: "Problemet",
+          title: "Ditt supportteam drunknar i brus",
+          subtitle: "Jag har arbetat inom kundservice. Jag vet hur det känns: 8 timmar med \"Vad är öppettiderna?\", \"Glömt lösenord\", \"Var är min order?\" – medan de viktiga ärendena ligger och väntar.",
+          stat1: "av förfrågningar är repetitiva frågor",
+          stat2: "slösar agenter dagligen på \"copy-paste\" svar",
+          stat3: "årlig kostnad per agent (nordisk lön)"
+        },
+        solution: {
+          label: "Lösningen",
+          title: "AI som förstår nordiska kunder",
+          subtitle: "Inte ännu en generisk chatbot. Ery AI är byggd för nordiska SMB – tränad på hur skandinaver faktiskt kommunicerar, med stöd för svenska, norska och danska.",
+          chat: {
+            title: "Chat",
+            desc: "Omedelbara svar på din webbplats. Lär sig från varje samtal. Eskalerar till människa vid behov."
+          },
+          email: {
+            title: "E-post",
+            desc: "Automatisk hantering av support-mail. Svarar på vanliga frågor, dirigerar viktiga ärenden vidare."
+          },
+          phone: {
+            title: "Telefon",
+            desc: "AI-driven telefonsvarare som förstår svenska. Tar emot beställningar, bokar möten, svarar på FAQ."
+          }
+        },
+        story: {
+          label: "Varför vi",
+          quote: "\"Jag har arbetat inom kundservice och tech-bolag (startups och enterprise). Jag har sett båda sidor: frustrationen av repetitivt arbete OCH vilken effekt rätt automatisering kan ha. Ery AI är inte byggd av AI-bros som aldrig jobbat support – den är byggd av någon som faktiskt förstår smärtan.\"",
+          author: "Ex-kundservice, startup-veteran"
+        },
+        cta: {
+          title: "Redo att skära bort bruset?",
+          subtitle: "Boka ett 20 min discovery call – vi visar dig hur Ery AI passar ditt team.",
+          placeholder: "din@foretag.se",
+          button: "Boka discovery call"
+        },
+        footer: {
+          contact: "Kontakt",
+          copy: "© 2026 Ery AI · Byggd för nordiska SMB"
+        },
+        alerts: {
+          success: "Tack! Vi kontaktar dig på {email} inom 24 timmar för att boka discovery call.",
+          error: "Vänligen ange en giltig e-postadress"
+        }
+      },
+      da: {
+        nav: {
+          problem: "Problem",
+          solution: "Løsning",
+          story: "Hvorfor os",
+          cta: "Kom i gang"
+        },
+        hero: {
+          badge: "Bygget af kundeservice-folk, til kundeservice-folk",
+          title1: "Kundeservice som",
+          titleHighlight: "faktisk løser",
+          title2: "problemet",
+          subtitle: "90% af supporthenvendelser er gentagne støj. Vi automatiserer dem – på svensk, norsk, dansk – så dit team kan fokusere på det, der faktisk kræver mennesker.",
+          cta1: "Se live demo",
+          cta2: "Book discovery call"
+        },
+        problem: {
+          label: "Problemet",
+          title: "Dit supportteam drukner i støj",
+          subtitle: "Jeg har arbejdet i kundeservice. Jeg ved, hvordan det føles: 8 timer med \"Hvad er åbningstiderne?\", \"Glemt adgangskode\", \"Hvor er min ordre?\" – mens de vigtige sager ligger og venter.",
+          stat1: "af henvendelser er gentagne spørgsmål",
+          stat2: "spilder agenter dagligt på \"copy-paste\" svar",
+          stat3: "årlig omkostning per agent (nordisk løn)"
+        },
+        solution: {
+          label: "Løsningen",
+          title: "AI som forstår nordiske kunder",
+          subtitle: "Ikke endnu en generisk chatbot. Ery AI er bygget til nordiske SMV'er – trænet i, hvordan skandinaver faktisk kommunikerer, med support for svensk, norsk og dansk.",
+          chat: {
+            title: "Chat",
+            desc: "Øjeblikkelige svar på din hjemmeside. Lærer fra hver samtale. Eskalerer til menneske, når det er nødvendigt."
+          },
+          email: {
+            title: "E-mail",
+            desc: "Automatisk håndtering af support-e-mails. Svarer på almindelige spørgsmål, dirigerer vigtige sager videre."
+          },
+          phone: {
+            title: "Telefon",
+            desc: "AI-drevet telefonsvar, der forstår dansk. Modtager bestillinger, booker møder, svarer på FAQ."
+          }
+        },
+        story: {
+          label: "Hvorfor os",
+          quote: "\"Jeg har arbejdet i kundeservice og tech-virksomheder (startups og enterprise). Jeg har set begge sider: frustrationen ved gentaget arbejde OG hvilken effekt den rigtige automatisering kan have. Ery AI er ikke bygget af AI-bros, der aldrig har arbejdet support – det er bygget af nogen, der faktisk forstår smerten.\"",
+          author: "Ex-kundeservice, startup-veteran"
+        },
+        cta: {
+          title: "Klar til at skære støjen væk?",
+          subtitle: "Book et 20 min discovery call – vi viser dig, hvordan Ery AI passer til dit team.",
+          placeholder: "din@virksomhed.dk",
+          button: "Book discovery call"
+        },
+        footer: {
+          contact: "Kontakt",
+          copy: "© 2026 Ery AI · Bygget til nordiske SMV'er"
+        },
+        alerts: {
+          success: "Tak! Vi kontakter dig på {email} inden for 24 timer for at aftale discovery call.",
+          error: "Venligst indtast en gyldig e-mailadresse"
+        }
+      },
+      en: {
+        nav: {
+          problem: "Problem",
+          solution: "Solution",
+          story: "Why us",
+          cta: "Get started"
+        },
+        hero: {
+          badge: "Built by customer service people, for customer service people",
+          title1: "Customer service that",
+          titleHighlight: "actually solves",
+          title2: "the problem",
+          subtitle: "90% of support inquiries are repetitive noise. We automate them – in Swedish, Norwegian, Danish – so your team can focus on what actually requires humans.",
+          cta1: "See live demo",
+          cta2: "Book discovery call"
+        },
+        problem: {
+          label: "The Problem",
+          title: "Your support team is drowning in noise",
+          subtitle: "I've worked in customer service. I know how it feels: 8 hours of \"What are the opening hours?\", \"Forgot password\", \"Where's my order?\" – while the important cases are waiting.",
+          stat1: "of inquiries are repetitive questions",
+          stat2: "agents waste daily on \"copy-paste\" answers",
+          stat3: "annual cost per agent (Nordic salary)"
+        },
+        solution: {
+          label: "The Solution",
+          title: "AI that understands Nordic customers",
+          subtitle: "Not another generic chatbot. Ery AI is built for Nordic SMBs – trained on how Scandinavians actually communicate, with support for Swedish, Norwegian, and Danish.",
+          chat: {
+            title: "Chat",
+            desc: "Instant answers on your website. Learns from every conversation. Escalates to human when needed."
+          },
+          email: {
+            title: "Email",
+            desc: "Automatic handling of support emails. Answers common questions, routes important cases forward."
+          },
+          phone: {
+            title: "Phone",
+            desc: "AI-powered phone answering that understands Nordic languages. Takes orders, books meetings, answers FAQs."
+          }
+        },
+        story: {
+          label: "Why us",
+          quote: "\"I've worked in customer service and tech companies (startups and enterprise). I've seen both sides: the frustration of repetitive work AND the impact proper automation can have. Ery AI isn't built by AI-bros who never worked support – it's built by someone who actually understands the pain.\"",
+          author: "Ex-customer service, startup veteran"
+        },
+        cta: {
+          title: "Ready to cut the noise?",
+          subtitle: "Book a 20 min discovery call – we'll show you how Ery AI fits your team.",
+          placeholder: "your@company.com",
+          button: "Book discovery call"
+        },
+        footer: {
+          contact: "Contact",
+          copy: "© 2026 Ery AI · Built for Nordic SMBs"
+        },
+        alerts: {
+          success: "Thanks! We'll contact you at {email} within 24 hours to schedule a discovery call.",
+          error: "Please enter a valid email address"
+        }
+      }
+    };
+
+    // Current language
+    let currentLang = 'no';
+
+    // Detect user's language based on browser settings
+    function detectLanguage() {
+      const browserLang = navigator.language || navigator.userLanguage;
+      const langCode = browserLang.toLowerCase().split('-')[0];
+      
+      if (langCode === 'sv') return 'sv';
+      if (langCode === 'da') return 'da';
+      if (langCode === 'no' || langCode === 'nb' || langCode === 'nn') return 'no';
+      if (langCode === 'en') return 'en';
+      
+      // Default to English for international visitors
+      return 'en';
+    }
+
+    // Get nested translation value
+    function getTranslation(key, lang) {
+      const keys = key.split('.');
+      let value = translations[lang];
+      
+      for (const k of keys) {
+        if (value && value[k] !== undefined) {
+          value = value[k];
+        } else {
+          return key; // Return key if translation not found
+        }
+      }
+      
+      return value;
+    }
+
+    // Update page with translations
+    function updateTranslations(lang) {
+      currentLang = lang;
+      
+      // Update all elements with data-i18n
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = getTranslation(key, lang);
+      });
+      
+      // Update placeholders
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.getAttribute('data-i18n-placeholder');
+        el.placeholder = getTranslation(key, lang);
+      });
+      
+      // Update language selector
+      document.getElementById('lang-select').value = lang;
+      
+      // Save to localStorage
+      localStorage.setItem('eryai-lang', lang);
+    }
+
+    // Change language
+    function changeLanguage(lang) {
+      updateTranslations(lang);
+    }
+
+    // Initialize language on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check localStorage first, then detect
+      const savedLang = localStorage.getItem('eryai-lang');
+      const detectedLang = savedLang || detectLanguage();
+      updateTranslations(detectedLang);
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Waitlist submission
+    function submitWaitlist() {
+      const email = document.getElementById('email-input').value;
+      const alerts = translations[currentLang].alerts;
+      
+      if (email && email.includes('@')) {
+        alert(alerts.success.replace('{email}', email));
+        document.getElementById('email-input').value = '';
+      } else {
+        alert(alerts.error);
+      }
+    }
+
+    // Allow Enter key to submit
+    document.getElementById('email-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        submitWaitlist();
+      }
+    });
+  </script>
+
+</body>
+</html>
