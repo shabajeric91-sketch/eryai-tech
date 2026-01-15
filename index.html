@@ -875,7 +875,7 @@
       <li><a href="#problem" data-i18n="nav.problem" onclick="toggleMobileMenu()">Problem</a></li>
       <li><a href="#solution" data-i18n="nav.solution" onclick="toggleMobileMenu()">Løsning</a></li>
       <li><a href="#story" data-i18n="nav.story" onclick="toggleMobileMenu()">Hvorfor vi</a></li>
-      <li><a href="https://ery-kqapuyn42-eryais-projects.vercel.app/restaurant-demo.html" target="_blank" onclick="toggleMobileMenu()">Demo</a></li>
+      <li><a href="https://ery-ai-demo-restaurang.vercel.app" target="_blank" onclick="toggleMobileMenu()">Demo</a></li>
       <li><a href="#waitlist" class="nav-cta" data-i18n="nav.cta" onclick="toggleMobileMenu()">Kom i gang</a></li>
       <li class="lang-switcher">
         <select id="lang-select-mobile" onchange="changeLanguage(this.value)">
@@ -901,7 +901,7 @@
         <li><a href="#problem" data-i18n="nav.problem">Problem</a></li>
         <li><a href="#solution" data-i18n="nav.solution">Løsning</a></li>
         <li><a href="#story" data-i18n="nav.story">Hvorfor vi</a></li>
-        <li><a href="https://ery-kqapuyn42-eryais-projects.vercel.app/restaurant-demo.html" target="_blank">Demo</a></li>
+        <li><a href="https://ery-ai-demo-restaurang.vercel.app" target="_blank">Demo</a></li>
         <li><a href="#waitlist" class="nav-cta" data-i18n="nav.cta">Kom i gang</a></li>
         <li class="lang-switcher">
           <select id="lang-select" onchange="changeLanguage(this.value)">
@@ -929,7 +929,7 @@
         90% av supporthenvendelser er repeterende støy. Vi automatiserer dem – på svensk, norsk, dansk – så teamet ditt kan fokusere på det som faktisk krever mennesker.
       </p>
       <div class="hero-ctas">
-        <a href="https://ery-kqapuyn42-eryais-projects.vercel.app/restaurant-demo.html" target="_blank" class="btn btn-primary">
+        <a href="https://ery-ai-demo-restaurang.vercel.app" target="_blank" class="btn btn-primary">
           <span data-i18n="hero.cta1">Se live demo</span> →
         </a>
         <a href="#waitlist" class="btn btn-secondary" data-i18n="hero.cta2">
@@ -1029,8 +1029,8 @@
       <div class="footer-content">
         <div class="logo">ery<span>.ai</span></div>
         <ul class="footer-links">
-          <li><a href="https://ery-kqapuyn42-eryais-projects.vercel.app/restaurant-demo.html" target="_blank">Demo</a></li>
-          <li><a href="mailto:info@eryai.tech" data-i18n="footer.contact">Kontakt</a></li>
+          <li><a href="https://ery-ai-demo-restaurang.vercel.app" target="_blank">Demo</a></li>
+          <li><a href="/cdn-cgi/l/email-protection#d9b0b7bfb699bcaba0b8b0f7adbcbab1" data-i18n="footer.contact">Kontakt</a></li>
           <li><a href="#waitlist">Waitlist</a></li>
         </ul>
       </div>
@@ -1040,7 +1040,7 @@
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Translation dictionary
     const translations = {
       no: {
@@ -1405,12 +1405,4 @@
     }
 
     // Allow Enter key to submit
-    document.getElementById('email-input').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        submitWaitlist();
-      }
-    });
-  </script>
-
-</body>
-</html>
+    document.getElementById('email-input')
